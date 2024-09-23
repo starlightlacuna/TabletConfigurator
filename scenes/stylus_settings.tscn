@@ -1,0 +1,55 @@
+[gd_scene load_steps=2 format=3 uid="uid://cl0gu3lv30wce"]
+
+[ext_resource type="Script" path="res://scenes/stylus_settings.gd" id="1_6ktbv"]
+
+[node name="StylusSettings" type="MarginContainer"]
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+script = ExtResource("1_6ktbv")
+metadata/_tab_index = 0
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 2
+columns = 2
+
+[node name="ModeLabel" type="Label" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Mode"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RelativeLabel" type="Label" parent="GridContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Relative"
+
+[node name="ModeSwitch" type="CheckButton" parent="GridContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="AbsoluteLabel" type="Label" parent="GridContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Absolute
+"
+
+[node name="Spacer" type="Control" parent="GridContainer"]
+layout_mode = 2
+
+[node name="ButtonContainer" type="HBoxContainer" parent="GridContainer"]
+layout_mode = 2
+
+[node name="ApplyButton" type="Button" parent="GridContainer/ButtonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Apply"
+
+[node name="RevertButton" type="Button" parent="GridContainer/ButtonContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Revert"
