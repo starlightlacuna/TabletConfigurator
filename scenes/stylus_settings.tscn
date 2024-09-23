@@ -53,3 +53,6 @@ text = "Apply"
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Revert"
+
+[connection signal="toggled" from="GridContainer/HBoxContainer/ModeSwitch" to="." method="_on_mode_switch_toggled"]
+[connection signal="pressed" from="GridContainer/ButtonContainer/ApplyButton" to="." method="_on_apply_button_pressed"]

@@ -44,7 +44,6 @@ func _get_devices() -> Array:
 		info[2] = (info[2] as String).substr(6)
 		device_info.push_back(info)
 		
-	
 	return device_info
 
 func _get_mode(device_id: String) -> Mode:
@@ -59,3 +58,19 @@ func _get_mode(device_id: String) -> Mode:
 	if output[0] == "Relative\n":
 		return Mode.RELATIVE
 	return Mode.ERROR
+
+func _set_mode(device_id: String, mode: Mode) -> void:
+	var mode_string: String = "Absolute" if mode == Mode.ABSOLUTE else "Relative"
+	var output: Array
+	OS.execute(XSETWACOM, ["set", device_id, "Mode", mode_string], output)
+	if output.size() > 1:
+		printerr(output[1])
+		return
+	print(output)
+
+func get_stylus_devices() -> Array:
+	var stylus_devices: Array = []
+	for device in devices:
+		if device[2] == "STYLUS":
+			stylus_devices.push_back(device)
+	return stylus_devices
