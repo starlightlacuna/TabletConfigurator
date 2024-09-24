@@ -3,11 +3,8 @@ extends Node
 
 const XSETWACOM: String = "xsetwacom"
 
-enum Mode { ABSOLUTE, RELATIVE, ERROR }
+var current_mode: Device.Mode
 
-var current_mode: Mode
-
-# TODO: Convert this mixed array into an array of custom Device objects
 ## String array containing info about Wacom devices
 ## 0: Name
 ## 1: ID
@@ -16,11 +13,7 @@ var current_mode: Mode
 var devices: Array
 
 func _ready() -> void:
-	# 1. Get the devices.
 	devices = _get_devices()
-	# 2. Get the mode.
-	for device in devices:
-		(device as Array).push_back(_get_mode(device[1]))
 	print(devices)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -40,27 +33,24 @@ func _get_devices() -> Array:
 		var info: Array = device.split("\t")
 		for index in info.size():
 			info[index] = (info[index] as String).rstrip(" ")
-		info[1] = (info[1] as String).substr(4)
-		info[2] = (info[2] as String).substr(6)
-		device_info.push_back(info)
-		
+		var new_device: Device = Device.new()
+		new_device.name = info[0]
+		new_device.id = (info[1] as String).substr(4)
+		new_device.set_type((info[2] as String).substr(6))
+		new_device.set_mode(_get_mode(new_device.id))
+		device_info.push_back(new_device)
 	return device_info
 
-func _get_mode(device_id: String) -> Mode:
+func _get_mode(device_id: String) -> String:
 	var output: Array
 	OS.execute(XSETWACOM, ["get", device_id, "Mode"], output)
 	if output.size() > 1:
 		printerr(output[1])
-		# THIS IS A HACK. DON'T LEAVE THIS LIKE THIS PLEASE.
-		return Mode.ERROR
-	if output[0] == "Absolute\n":
-		return Mode.ABSOLUTE
-	if output[0] == "Relative\n":
-		return Mode.RELATIVE
-	return Mode.ERROR
+		return ""
+	return output[0].rstrip("\n")
 
-func _set_mode(device_id: String, mode: Mode) -> void:
-	var mode_string: String = "Absolute" if mode == Mode.ABSOLUTE else "Relative"
+func _set_mode(device_id: String, mode: Device.Mode) -> void:
+	var mode_string: String = "Absolute" if mode == Device.Mode.ABSOLUTE else "Relative"
 	var output: Array
 	OS.execute(XSETWACOM, ["set", device_id, "Mode", mode_string], output)
 	if output.size() > 1:
@@ -71,6 +61,6 @@ func _set_mode(device_id: String, mode: Mode) -> void:
 func get_stylus_devices() -> Array:
 	var stylus_devices: Array = []
 	for device in devices:
-		if device[2] == "STYLUS":
+		if device.get_type() == Device.Type.STYLUS:
 			stylus_devices.push_back(device)
 	return stylus_devices
