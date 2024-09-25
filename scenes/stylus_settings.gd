@@ -34,5 +34,5 @@ func _on_mode_switch_toggled(toggled_on: bool) -> void:
 	_disable_buttons(false)
 
 func _on_apply_button_pressed() -> void:
-	SystemSettings._set_mode("12", mode)
+	SystemSettings._set_mode((styluses[0] as Device).id, mode)
 	_disable_buttons(true)

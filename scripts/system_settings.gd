@@ -1,24 +1,18 @@
 extends Node
 
-
 const XSETWACOM: String = "xsetwacom"
+const XRANDR: String = "xrandr"
 
 var current_mode: Device.Mode
 
-## String array containing info about Wacom devices
-## 0: Name
-## 1: ID
-## 2: type
-## 3: Mode
+## Array containing Device resources with info about Wacom devices.
 var devices: Array
+## Array containing Monitor resources. 
+var monitors: Dictionary
 
 func _ready() -> void:
 	devices = _get_devices()
-	print(devices)
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+	monitors = _get_monitors()
 
 func _get_devices() -> Array:
 	var output: Array
@@ -57,6 +51,45 @@ func _set_mode(device_id: String, mode: Device.Mode) -> void:
 		printerr(output[1])
 		return
 	print(output)
+	
+func _get_monitors() -> Dictionary:
+	var output: Array
+	OS.execute(XRANDR, [], output, true)
+	if output.size() > 1:
+		printerr(output[1])
+		return {}
+	var monitor_lines: Array = (output[0] as String).split("\n")
+	
+	var monitors: Dictionary = {}
+	for index in monitor_lines.size() - 1:
+		var line: Array = (monitor_lines[index] as String).split(" ", false)
+		
+		# TODO: Try to refactor this into guard clauses
+		if index == 0:
+			var monitor: Monitor = Monitor.new()
+			monitor.id = "desktop"
+			monitor.name = "All"
+			monitor.resolution = Vector2i(int(line[7]), int(line[9]))
+			monitors[monitor.id] = monitor
+			continue
+		if line[1] == "connected":
+			var monitor: Monitor = Monitor.new()
+			monitor.id = line[0]
+			monitor.name = monitor.id
+			var resolution_array: Array
+			if line[2] == "primary":
+				resolution_array = line[3].split("x")
+			else:
+				resolution_array = line[2].split("x")
+			var temp: Array = resolution_array.pop_back().split("+")
+			for element in temp:
+				resolution_array.push_back(int(element))
+			resolution_array[0] = int(resolution_array[0])
+			monitor.resolution = Vector2i(resolution_array[0], resolution_array[1])
+			monitor.offset = Vector2i(resolution_array[2], resolution_array[3])
+			monitors[monitor.id] = monitor
+			continue
+	return monitors
 
 func get_stylus_devices() -> Array:
 	var stylus_devices: Array = []
