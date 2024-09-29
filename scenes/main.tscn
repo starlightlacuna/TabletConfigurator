@@ -38,22 +38,38 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 1
+current_tab = 0
 
 [node name="StylusSettings" parent="PanelContainer/MarginContainer/VBoxContainer/SettingsTabContainer" instance=ExtResource("2_8qrei")]
-visible = false
 layout_mode = 2
 
 [node name="MonitorSettings" parent="PanelContainer/MarginContainer/VBoxContainer/SettingsTabContainer" instance=ExtResource("3_43tpw")]
+visible = false
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="ButtonsContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="ConfirmButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Spacer" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer"]
 layout_mode = 2
-text = "Confirm"
+size_flags_horizontal = 3
 
-[node name="CancelButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="CloseButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
-text = "Cancel"
+text = "Close
+"
+
+[node name="RevertButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Revert"
+
+[node name="ApplyButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Apply"
+
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer/CloseButton" to="." method="_on_close_button_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer/RevertButton" to="." method="_on_revert_button_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/ButtonsContainer/ApplyButton" to="." method="_on_apply_button_pressed"]

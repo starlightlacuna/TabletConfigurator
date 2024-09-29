@@ -3,27 +3,25 @@ extends Node
 const XSETWACOM: String = "xsetwacom"
 const XRANDR: String = "xrandr"
 
-var current_mode: Device.Mode
-
-## Array containing Device resources with info about Wacom devices.
-var devices: Array
-## Array containing Monitor resources. 
-var monitors: Dictionary
+var system_state: State
+var unsaved_state: State
 
 func _ready() -> void:
-	devices = _get_devices()
-	monitors = _get_monitors()
+	system_state = State.new()
+	
+	system_state.set_devices(_get_system_devices())
+	system_state.set_monitors(_get_system_monitors())
 
-func _get_devices() -> Array:
+func _get_system_devices() -> Dictionary:
 	var output: Array
 	OS.execute(XSETWACOM, ["list", "devices"], output, true)
 	if output.size() > 1:
 		printerr(output[1])
-		return []
-	var devices: Array = (output[0] as String).split("\n")
-	devices.remove_at(devices.size() - 1)
-	var device_info: Array = []
-	for device in devices:
+		return {}
+	var device_strings: Array = (output[0] as String).split("\n")
+	device_strings.remove_at(device_strings.size() - 1)
+	var device_info: Dictionary = {}
+	for device in device_strings:
 		var info: Array = device.split("\t")
 		for index in info.size():
 			info[index] = (info[index] as String).rstrip(" ")
@@ -32,8 +30,11 @@ func _get_devices() -> Array:
 		new_device.id = (info[1] as String).substr(4)
 		new_device.set_type((info[2] as String).substr(6))
 		new_device.set_mode(_get_mode(new_device.id))
-		device_info.push_back(new_device)
-	return device_info
+		if device_info.has(new_device.id):
+			printerr("Duplicate device ID found! (%s)" % new_device.id)
+			return {}
+		device_info[new_device.id] = new_device
+	return device_info	
 
 func _get_mode(device_id: String) -> String:
 	var output: Array
@@ -52,7 +53,7 @@ func _set_mode(device_id: String, mode: Device.Mode) -> void:
 		return
 	print(output)
 	
-func _get_monitors() -> Dictionary:
+func _get_system_monitors() -> Dictionary:
 	var output: Array
 	OS.execute(XRANDR, [], output, true)
 	if output.size() > 1:
@@ -60,40 +61,45 @@ func _get_monitors() -> Dictionary:
 		return {}
 	var monitor_lines: Array = (output[0] as String).split("\n")
 	
-	var monitors: Dictionary = {}
+	var monitors_found: Dictionary = {}
 	for index in monitor_lines.size() - 1:
 		var line: Array = (monitor_lines[index] as String).split(" ", false)
 		
-		# TODO: Try to refactor this into guard clauses
+		var monitor: Monitor = Monitor.new()
+		
 		if index == 0:
-			var monitor: Monitor = Monitor.new()
 			monitor.id = "desktop"
 			monitor.name = "All"
 			monitor.resolution = Vector2i(int(line[7]), int(line[9]))
-			monitors[monitor.id] = monitor
+			monitors_found[monitor.id] = monitor
 			continue
-		if line[1] == "connected":
-			var monitor: Monitor = Monitor.new()
-			monitor.id = line[0]
-			monitor.name = monitor.id
-			var resolution_array: Array
-			if line[2] == "primary":
-				resolution_array = line[3].split("x")
-			else:
-				resolution_array = line[2].split("x")
-			var temp: Array = resolution_array.pop_back().split("+")
-			for element in temp:
-				resolution_array.push_back(int(element))
-			resolution_array[0] = int(resolution_array[0])
-			monitor.resolution = Vector2i(resolution_array[0], resolution_array[1])
-			monitor.offset = Vector2i(resolution_array[2], resolution_array[3])
-			monitors[monitor.id] = monitor
+			
+		if line[1] != "connected":
 			continue
-	return monitors
+		
+		monitor.id = line[0]
+		monitor.name = monitor.id
+		var resolution_array: Array
+		if line[2] == "primary":
+			resolution_array = line[3].split("x")
+		else:
+			resolution_array = line[2].split("x")
+		var temp: Array = resolution_array.pop_back().split("+")
+		for element in temp:
+			resolution_array.push_back(int(element))
+		resolution_array[0] = int(resolution_array[0])
+		monitor.resolution = Vector2i(resolution_array[0], resolution_array[1])
+		monitor.offset = Vector2i(resolution_array[2], resolution_array[3])
+		monitors_found[monitor.id] = monitor
+	return monitors_found
 
 func get_stylus_devices() -> Array:
 	var stylus_devices: Array = []
-	for device in devices:
-		if device.get_type() == Device.Type.STYLUS:
-			stylus_devices.push_back(device)
+	var devices: Dictionary = system_state.get_devices()
+	for device_key in devices:
+		if (devices[device_key] as Device).get_type() == Device.Type.STYLUS:
+			stylus_devices.push_back(devices[device_key])
 	return stylus_devices
+	
+func get_monitors() -> Dictionary:
+	return system_state.get_monitors()

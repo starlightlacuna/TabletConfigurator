@@ -23,6 +23,7 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Relative"
+horizontal_alignment = 2
 
 [node name="ModeSwitch" type="CheckButton" parent="GridContainer/HBoxContainer"]
 unique_name_in_owner = true

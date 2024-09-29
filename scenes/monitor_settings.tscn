@@ -3,7 +3,8 @@
 [ext_resource type="Script" path="res://scenes/monitor_settings.gd" id="1_wplia"]
 
 [node name="MonitorSettings" type="MarginContainer"]
-theme_override_constants/margin_top = 0
+offset_right = 160.0
+offset_bottom = 23.0
 script = ExtResource("1_wplia")
 metadata/_tab_index = 1
 
@@ -13,8 +14,10 @@ columns = 2
 
 [node name="MonitorOptionLabel" type="Label" parent="GridContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Mapped Display"
 
 [node name="MonitorOptionButton" type="OptionButton" parent="GridContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3

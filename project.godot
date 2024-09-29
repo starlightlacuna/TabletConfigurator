@@ -18,3 +18,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 SystemSettings="*res://scripts/system_settings.gd"
+
+[display]
+
+window/size/viewport_width=600
+window/size/viewport_height=600
