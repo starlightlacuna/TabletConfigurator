@@ -1,0 +1,39 @@
+[gd_scene load_steps=2 format=3 uid="uid://djnnau7b8xdwe"]
+
+[ext_resource type="Script" path="res://scenes/stylus_tab.gd" id="1_ns4se"]
+
+[node name="StylusTab" type="MarginContainer"]
+script = ExtResource("1_ns4se")
+metadata/_tab_index = 0
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 2
+columns = 2
+
+[node name="ModeLabel" type="Label" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Mode"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RelativeLabel" type="Label" parent="GridContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Relative"
+horizontal_alignment = 2
+
+[node name="ModeSwitch" type="CheckButton" parent="GridContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="AbsoluteLabel" type="Label" parent="GridContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Absolute
+"
+
+[node name="Spacer" type="Control" parent="GridContainer"]
+layout_mode = 2

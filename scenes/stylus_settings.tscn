@@ -1,41 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://cl0gu3lv30wce"]
+[gd_scene load_steps=3 format=3 uid="uid://cl0gu3lv30wce"]
 
 [ext_resource type="Script" path="res://scenes/stylus_settings.gd" id="1_6ktbv"]
+[ext_resource type="PackedScene" uid="uid://djnnau7b8xdwe" path="res://scenes/stylus_tab.tscn" id="2_8w0kt"]
 
-[node name="StylusSettings" type="MarginContainer"]
+[node name="StylusSettings" type="TabContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
 script = ExtResource("1_6ktbv")
 metadata/_tab_index = 0
 
-[node name="GridContainer" type="GridContainer" parent="."]
+[node name="StylusTab" parent="." instance=ExtResource("2_8w0kt")]
 layout_mode = 2
-columns = 2
-
-[node name="ModeLabel" type="Label" parent="GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Mode"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="RelativeLabel" type="Label" parent="GridContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Relative"
-horizontal_alignment = 2
-
-[node name="ModeSwitch" type="CheckButton" parent="GridContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="AbsoluteLabel" type="Label" parent="GridContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Absolute
-"
-
-[node name="Spacer" type="Control" parent="GridContainer"]
-layout_mode = 2
-
-[connection signal="toggled" from="GridContainer/HBoxContainer/ModeSwitch" to="." method="_on_mode_switch_toggled"]

@@ -1,12 +1,10 @@
-extends MarginContainer
+extends TabContainer
 
 var mode_switch: CheckButton
 var apply_button: Button
 var revert_button: Button
 
 var stylus_ids: Array
-
-## TODO: Create separate scenes for each stylus found
 
 func _ready() -> void:
 	mode_switch = %ModeSwitch
